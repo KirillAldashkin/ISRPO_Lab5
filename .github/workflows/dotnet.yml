@@ -4,6 +4,8 @@ on:
     branches: [ "main" ]
 jobs:
   build:
+    permissions:
+      checks: write
     strategy:
       fail-fast: false
       matrix:
