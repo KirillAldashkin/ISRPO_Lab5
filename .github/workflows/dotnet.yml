@@ -18,9 +18,10 @@ jobs:
         dotnet-version: 8.0.x
     - name: Run tests
       run: dotnet test Sample.Tests/Sample.Tests.csproj --logger trx --results-directory "TestResults-${{ matrix.os }}"
-    - name: Upload dotnet test results
+    - name: Report tests
       if: ${{ always() }}
-      uses: actions/upload-artifact@v4
+      uses: dorny/test-reporter@v1.9.1
       with:
-        name: TestResults-${{ matrix.os }}
-        path: TestResults-${{ matrix.os }}
+        name: .NET tests 
+        path: "TestResults-${{ matrix.os }}/**.trx"
+        reporter: dotnet-trx
