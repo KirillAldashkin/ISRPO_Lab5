@@ -1,4 +1,4 @@
-name: .NET
+name: Build app
 on: [ push ]
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
             arch: android
     runs-on: ${{ matrix.os }}
     env:
-      net_rid: ${{ format((matrix.os == 'windows-latest' && 'windows-{0}' || 'linux-{0}'), matrix.arch) }}
+      net_rid: ${{ matrix.os == 'windows-latest' && 'windows' || 'linux' }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup Java JDK
@@ -26,6 +26,7 @@ jobs:
       uses: android-actions/setup-android@v3.2.1
       with:
         cmdline-tools-version: 11076708
+        log-accepted-android-sdk-licenses: false
         packages: build-tools ndk platform-tools platforms 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -36,7 +37,7 @@ jobs:
       run: dotnet workload install android
     - name: Build Desktop app
       if: ${{ matrix.arch != 'android' }}
-      run: dotnet publish Sample.Desktop -p:PublishAot=true -r $net_rid
+      run: dotnet publish Sample.Desktop -p:PublishAot=true -r $net_rid-${{ matrix.arch }}
     - name: Build Android app
       if: ${{ matrix.arch == 'android' }}
       run: dotnet publish Sample.Android
