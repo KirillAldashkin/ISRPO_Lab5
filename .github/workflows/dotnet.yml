@@ -1,9 +1,7 @@
 name: Test
-on:
-  push:
-    branches: [ "main" ]
+on: [ push ]
 jobs:
-  build:
+  test:
     permissions:
       checks: write
     strategy:
@@ -24,6 +22,6 @@ jobs:
       if: ${{ always() }}
       uses: dorny/test-reporter@v1.9.1
       with:
-        name: .NET tests 
+        name: Test report for ${{ matrix.os }} 
         path: "TestResults-${{ matrix.os }}/**.trx"
         reporter: dotnet-trx
