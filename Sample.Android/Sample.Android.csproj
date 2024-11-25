@@ -23,7 +23,7 @@
 		<Exec Command="git submodule update --init --recursive" WorkingDirectory="$(MSBuildProjectDirectory)\.." />
 		<!-- Build .aar library -->
 		<Message Text="Building .aar library" Importance="high" />
-		<Exec Command="gradlew build -PBUILD_AS_LIBRARY" WorkingDirectory="$(MSBuildProjectDirectory)\..\SDL\android-project" />
+		<Exec Command=".\gradlew build -PBUILD_AS_LIBRARY" WorkingDirectory="$(MSBuildProjectDirectory)\..\SDL\android-project" />
 		<!-- Append to .aar list -->
 		<Message Text="Updating .aar list" Importance="high" />
 		<ItemGroup>

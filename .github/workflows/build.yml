@@ -12,7 +12,7 @@ jobs:
             arch: android
     runs-on: ${{ matrix.os }}
     env:
-      net_rid: ${{ fromJSON('["linux", "windows"]')[matrix.os == 'windows-latest'] }}
+      net_rid: ${{ fromJSON('["linux", "win"]')[matrix.os == 'windows-latest'] }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup Java JDK
