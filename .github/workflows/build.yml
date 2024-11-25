@@ -1,0 +1,42 @@
+name: .NET
+on: [ push ]
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        arch: [x64, arm64]
+        include:
+          - os: ubuntu-latest
+            arch: android
+    runs-on: ${{ matrix.os }}
+    env:
+      net_rid: ${{ format((matrix.os == 'windows-latest' && 'windows-{0}' || 'linux-{0}'), matrix.arch) }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Java JDK
+      if: ${{ matrix.arch == 'android' }}
+      uses: actions/setup-java@v4.5.0
+      with:
+        java-version: 18
+        distribution: adopt          
+    - name: Setup Android SDK
+      if: ${{ matrix.arch == 'android' }}
+      uses: android-actions/setup-android@v3.2.1
+      with:
+        cmdline-tools-version: 11076708
+        packages: build-tools ndk platform-tools platforms 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Setup .NET Android
+      if: ${{ matrix.arch == 'android' }}
+      run: dotnet workload install android
+    - name: Build Desktop app
+      if: ${{ matrix.arch != 'android' }}
+      run: dotnet publish Sample.Desktop -p:PublishAot=true -r $net_rid
+    - name: Build Android app
+      if: ${{ matrix.arch == 'android' }}
+      run: dotnet publish Sample.Android
