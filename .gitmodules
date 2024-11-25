@@ -1,0 +1,4 @@
+[submodule "SDL"]
+	path = SDL
+	url = https://github.com/KirillAldashkin/SDL.git
+	branch = custom-2.30.9

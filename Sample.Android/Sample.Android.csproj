@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!-- .NET settings -->
+		<TargetFramework>net8.0-android</TargetFramework>
+		<OutputType>Exe</OutputType>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<TrimMode>full</TrimMode>
+	</PropertyGroup>
+	<PropertyGroup>
+		<!-- Android settings -->
+		<SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+		<ApplicationId>ru.nukleer.SampleAndroid</ApplicationId>
+		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+	</ItemGroup>
+	<Target Name="PrepareAarLibrary" BeforeTargets="_CategorizeAndroidLibraries">
+		<!-- Ensure SDL submodule is present -->
+		<Message Text="Checking SDL submodule" Importance="high" />
+		<Exec Command="git submodule update --init --recursive" WorkingDirectory="$(MSBuildProjectDirectory)\.." />
+		<!-- Build .aar library -->
+		<Message Text="Building .aar library" Importance="high" />
+		<Exec Command="gradlew build -PBUILD_AS_LIBRARY" WorkingDirectory="$(MSBuildProjectDirectory)\..\SDL\android-project" />
+		<!-- Append to .aar list -->
+		<Message Text="Updating .aar list" Importance="high" />
+		<ItemGroup>
+			<AndroidLibrary Include="$(MSBuildProjectDirectory)\..\SDL\android-project\app\build\outputs\aar\app-$(Configuration.ToLower()).aar" />
+		</ItemGroup>
+	</Target>
+</Project>
