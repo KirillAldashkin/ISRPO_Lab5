@@ -12,7 +12,7 @@ jobs:
             arch: android
     runs-on: ${{ matrix.os }}
     env:
-      net_rid: ${{ matrix.os == 'windows-latest' && 'windows' || 'linux' }}
+      net_rid: ${{ (matrix.os == 'windows-latest') && 'windows' || 'linux' }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup Java JDK
@@ -27,7 +27,7 @@ jobs:
       with:
         cmdline-tools-version: 11076708
         log-accepted-android-sdk-licenses: false
-        packages: build-tools ndk platform-tools platforms 
+        packages: tools ndk platform-tools platforms 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
