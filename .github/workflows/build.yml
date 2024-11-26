@@ -67,14 +67,14 @@ jobs:
       if: ${{ matrix.arch == 'android' }}
       uses: actions/upload-artifact@v4
       with:
-        name: android.apk
+        name: android_apk
         path: Sample.Android/bin/Release/net8.0-android/ru.nukleer.SampleAndroid-Signed.apk
         if-no-files-found: error
     - name: Upload Android AAB
       if: ${{ matrix.arch == 'android' }}
       uses: actions/upload-artifact@v4
       with:
-        name: android.aab
+        name: android_aab
         path: Sample.Android/bin/Release/net8.0-android/ru.nukleer.SampleAndroid-Signed.aab
         if-no-files-found: error
     - name: Upload Linux executable
@@ -85,7 +85,7 @@ jobs:
         path: Sample.Desktop/bin/Release/net8.0/linux-${{ matrix.arch }}/publish/Sample.Desktop
         if-no-files-found: error
     - name: Upload Windows executable
-      if: ${{ matrix.os == 'windows-latest' }}
+      if: ${{ matrix.os == 'windows-2022' }}
       uses: actions/upload-artifact@v4
       with:
         name: windows-${{ matrix.arch }}
