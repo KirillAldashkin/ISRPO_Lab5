@@ -56,6 +56,8 @@ jobs:
       run: dotnet publish Sample.Android
     - name: Build SDL.dll to bundle with Windows artifact
       if: ${{ matrix.os == 'windows-latest' }}
-      working-directory: ..\SDL\VisualC\SDL\
-      run: msbuild -p:Configuration=Release -p:Platform=${{ matrix.arch }}
+      run: |
+        git submodule update --init --recursive
+        cd ./SDL/VisualC/SDL
+        msbuild -p:Configuration=Release -p:Platform=${{ matrix.arch }}
  
