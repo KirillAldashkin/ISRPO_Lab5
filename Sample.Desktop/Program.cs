@@ -47,10 +47,44 @@ class Program : Client
 
     protected override nint LoadSDLLibrary()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            return NativeLibrary.Load("SDL2.dll");
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            return NativeLibrary.Load("libSDL2-2.0.so.0");
+        try
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var handle = NativeLibrary.Load("SDL2.dll");
+                unsafe
+                {
+                    // SDL successfully loaded, can hide console window
+                    var kernel32 = NativeLibrary.Load("kernel32.dll");
+                    var freeConsole = (delegate* unmanaged<int>)NativeLibrary.GetExport(kernel32, "FreeConsole");
+                    freeConsole();
+                    NativeLibrary.Free(kernel32);
+                }
+                return handle;
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return NativeLibrary.Load("libSDL2-2.0.so.0");
+        }
+        catch (DllNotFoundException)
+        {
+            Console.Error.WriteLine("<!!! FATAL: Could not find SDL2 shared library !!!>");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Console.Error.WriteLine("""
+                    Original download provides a .zip archive with SDL2 library bundled.
+                    If you do not have it for some reason, download and place it near to
+                    this executable, named 'SDL2.dll'
+                    """);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                Console.Error.WriteLine("""
+                    Install SDL2 on your system. The easiest way to do this is using
+                    package manager:
+                      `sudo apt install libsdl2-2.0-0` - for Debian-based systems
+                      `sudo dnf install SDL2` - for Red Hat-based systems
+                    """);
+            Console.Error.WriteLine("[See https://wiki.libsdl.org/SDL2/Installation for more info]");
+            Thread.Sleep(2500);
+            Environment.Exit(-1);
+        }
         throw new PlatformNotSupportedException();
     }
 
