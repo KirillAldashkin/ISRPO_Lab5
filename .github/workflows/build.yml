@@ -86,7 +86,7 @@ jobs:
         if-no-files-found: error
     - name: Prepare Windows executable
       if: ${{ matrix.os == 'windows-2022' }}
-      run:
+      run: |
         mkdir UploadWindows
         move SDL\VisualC\SDL\${{ matrix.arch }}\Release\SDL2.dll UploadWindows
         move Sample.Desktop\bin\Release\net8.0\win-${{ matrix.arch }}\publish\Sample.Desktop.exe UploadWindows
