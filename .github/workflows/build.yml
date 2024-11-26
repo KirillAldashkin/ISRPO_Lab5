@@ -11,8 +11,6 @@ jobs:
           - os: ubuntu-latest
             arch: android
     runs-on: ${{ matrix.os }}
-    env:
-      net_rid: ${{ fromJSON('["linux", "win"]')[matrix.os == 'windows-latest'] }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup Java JDK
@@ -35,9 +33,19 @@ jobs:
     - name: Setup .NET Android
       if: ${{ matrix.arch == 'android' }}
       run: dotnet workload install android
+    - name: Prepare for ARM64 Linux
+      if: ${{ matrix.arch == 'arm64' && matrix.os == 'ubuntu-latest' }}
+      run: sudo apt install g++-aarch64-linux-gnu libc6-dev-arm64-cross
     - name: Build Desktop app
       if: ${{ matrix.arch != 'android' }}
+      env:
+        net_rid: ${{ fromJSON('["linux", "win"]')[matrix.os == 'windows-latest'] }}
       run: dotnet publish Sample.Desktop -p:PublishAot=true -r ${{ env.net_rid }}-${{ matrix.arch }}
     - name: Build Android app
       if: ${{ matrix.arch == 'android' }}
       run: dotnet publish Sample.Android
+    - name: Build SDL.dll to bundle with Windows artifact
+      if: ${{ matrix.os == 'windows-latest' }}
+      working-directory: ./SDL/VisualC/SDL
+      run: msbuild -p:Configuration=Release -p:Platform=${{ matrix.arch }}
+ 
