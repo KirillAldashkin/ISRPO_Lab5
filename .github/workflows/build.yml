@@ -5,7 +5,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        os: [windows-2022, ubuntu-22.04]
         arch: [x64, arm64]
         include:
           - os: ubuntu-22.04
@@ -49,13 +49,16 @@ jobs:
     - name: Build Desktop app
       if: ${{ matrix.arch != 'android' }}
       env:
-        net_rid: ${{ fromJSON('["linux", "win"]')[matrix.os == 'windows-latest'] }}
+        net_rid: ${{ fromJSON('["linux", "win"]')[matrix.os == 'windows-2022'] }}
       run: dotnet publish Sample.Desktop -p:PublishAot=true -r ${{ env.net_rid }}-${{ matrix.arch }}
     - name: Build Android app
       if: ${{ matrix.arch == 'android' }}
       run: dotnet publish Sample.Android
+    - name: Add MSBuild to PATH
+      if: ${{ matrix.os == 'windows-2022' }}
+      uses: microsoft/setup-msbuild@v2
     - name: Build SDL.dll to bundle with Windows artifact
-      if: ${{ matrix.os == 'windows-latest' }}
+      if: ${{ matrix.os == 'windows-2022' }}
       run: |
         git submodule update --init --recursive
         cd ./SDL/VisualC/SDL
