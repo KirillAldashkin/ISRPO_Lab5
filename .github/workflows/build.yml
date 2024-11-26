@@ -37,7 +37,7 @@ jobs:
       run: dotnet workload install android
     - name: Build Desktop app
       if: ${{ matrix.arch != 'android' }}
-      run: dotnet publish Sample.Desktop -p:PublishAot=true -r $net_rid-${{ matrix.arch }}
+      run: dotnet publish Sample.Desktop -p:PublishAot=true -r ${{ env.net_rid }}-${{ matrix.arch }}
     - name: Build Android app
       if: ${{ matrix.arch == 'android' }}
       run: dotnet publish Sample.Android
