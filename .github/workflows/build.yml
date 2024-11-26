@@ -84,12 +84,18 @@ jobs:
         name: linux-${{ matrix.arch }}
         path: Sample.Desktop/bin/Release/net8.0/linux-${{ matrix.arch }}/publish/Sample.Desktop
         if-no-files-found: error
+    - name: Prepare Windows executable
+      if: ${{ matrix.os == 'windows-2022' }}
+      run:
+        mkdir UploadWindows
+        move SDL\VisualC\SDL\${{ matrix.arch }}\Release\SDL2.dll UploadWindows
+        move Sample.Desktop\bin\Release\net8.0\win-${{ matrix.arch }}\publish\Sample.Desktop.exe UploadWindows
     - name: Upload Windows executable
       if: ${{ matrix.os == 'windows-2022' }}
       uses: actions/upload-artifact@v4
       with:
         name: windows-${{ matrix.arch }}
         path: |
-          Sample.Desktop/bin/Release/net8.0/win-${{ matrix.arch }}/publish/Sample.Desktop.exe
-          SDL/VisualC/SDL/${{ matrix.arch }}/Release/SDL2.dll
+          UploadWindows/Sample.Desktop.exe
+          UploadWindows/SDL2.dll
         if-no-files-found: error
